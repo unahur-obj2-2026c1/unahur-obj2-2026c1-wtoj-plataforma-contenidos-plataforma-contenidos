@@ -126,9 +126,10 @@ public class Episodio {
   }
 
   public Double getCosto() {
-    return costo;
+    return costo; // devuelve el costo individual del episodio (unidad básica del cálculo)
   }
 
+  // Podria no estar
   public void setCosto(Double costo) {
     this.costo = costo;
   }
@@ -197,10 +198,19 @@ public class Serie extends Contenido {
         super(titulo, costoBase);
     }
 
+    public List<Temporada> getTemporadas() {
+        return temporadas;
+    }
+
     @Override
     public Double doCosto() {
-        return temporadas.stream().mapToDouble(t -> t.costo()).average().orElse(0.0);
- }
+
+        return temporadas.stream() // convierte la lista de temporadas en un stream para procesarlas 
+                .flatMap(t -> t.getEpisodios().stream()) // aplana: pasa de "temporadas con listas de episodios" a "todos los episodios juntos"
+                .mapToDouble(Episodio::getCosto) // transforma cada episodio en su costo (double)
+                .average() // calcula el promedio de todos los costos
+                .orElse(0.0); // si no hay episodios, devuelve 0 para evitar vacío
+    }
 
     public void agregarTemporada(Temporada temporada) {
         temporadas.add(temporada);
@@ -217,32 +227,36 @@ import java.util.List;
 public class Temporada {
     private final Integer numero;
     private List<Episodio> episodios = new ArrayList<>();
-    
+
     public Temporada(Integer numero) {
         this.numero = numero;
     }
 
     public Temporada(Integer numero, List<Episodio> episodios) {
         this.numero = numero;
-        this.episodios = episodios;
+        this.episodios = new ArrayList<>(episodios); // Es mas adecuado una copia defensiva que solo episodios;
     }
 
-        public void agregarEpisodio(Episodio episodio) {
-            episodios.add(episodio);
-        }
+    public void agregarEpisodio(Episodio episodio) {
+        episodios.add(episodio);
+    }
 
-        public Integer getNumero() {
-            return numero;
-        }
+    public Integer getNumero() {
+        return numero;
+    }
 
-        public List<Episodio> getEpisodios() {
-            return episodios;
-        }
+    public List<Episodio> getEpisodios() {
+        return List.copyOf(episodios); // Para no exponer la lista interna (mutable)
+    }
 
-        public Double costo() {
-            return episodios.stream().mapToDouble(e -> e.getCosto()).average().orElse(0.0);
-        }
-    
+    public Double costo() {
+        return episodios.stream()
+                .mapToDouble(e -> e.getCosto()) // Version moderna .mapToDouble(Episodio::getCosto)
+                .average()
+                .orElse(0.0);
+        // Promedio de esta temporada, no de toda la serie
+    }
+
 }
 /*------------------------------------------------------------------------------------------*/
 
@@ -266,6 +280,7 @@ import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
 
 public class PlanBasico  implements IPlan{
     private Integer limite;
+    private Double costoBase = 5.0;
 
     public PlanBasico(Integer limite) {
         this.limite = limite;
@@ -273,19 +288,64 @@ public class PlanBasico  implements IPlan{
 
     @Override
     public Double costoPlan(Usuario usuario) {
-        Double costoBase = 5.0;
         List<Contenido> contenidos = usuario.getContenidos();
-        if (limite >= contenidos.size()) {
-            return costoBase;
-        } else  {
-            List<Contenido> excedentes = contenidos.subList(limite,contenidos.size());
-            return costoBase + excedentes.stream().mapToDouble(c -> c.costo()).sum();
-        }
+        Double costoExcedentes = contenidos.stream()
+            .skip(limite) // saltea los primeros 'limite' elementos del stream (los incluidos en el plan) y deja solo los excedentes
+            .mapToDouble(Contenido::getCostoBase) // esta es la forma moderna del closure
+            .sum();
+
+        return this.costoBase + costoExcedentes;
+    }
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\planes\PlanFamiliar.java
+package ar.edu.unahur.obj2.w2j.planes;
+
+import java.util.List;
+
+import ar.edu.unahur.obj2.w2j.contenidos.Contenido;
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
+
+public class PlanFamiliar implements IPlan {
+    private Integer limite;
+    private Double costoBase = 5.0;
+    private Double descuento = 0.15;
+
+    public PlanFamiliar(Integer limite) {
+        this.limite = limite;
     }
 
+    @Override
+    public Double costoPlan(Usuario usuario) {
+        List<Contenido> contenidos = usuario.getContenidos();
+        Double costoExcedentes = contenidos.stream()
+            .skip(limite) // saltea los primeros 'limite' elementos del stream (los incluidos en el plan) y deja solo los excedentes
+            .mapToDouble(Contenido::getCostoBase) // esta es la forma moderna del closure
+            .sum();
 
+        return (this.costoBase + costoExcedentes) * (1 - descuento);
+    }
+}
+/*------------------------------------------------------------------------------------------*/
 
-    
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\planes\PlanPremium.java
+package ar.edu.unahur.obj2.w2j.planes;
+
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
+
+public class PlanPremium implements IPlan {
+
+    private Double costoPlan;
+
+    public PlanPremium(Double costoPlan) {
+        this.costoPlan = costoPlan;
+    }
+
+    @Override
+    public Double costoPlan(Usuario usuario) {
+        return this.costoPlan;
+    }
 
 }
 /*------------------------------------------------------------------------------------------*/
