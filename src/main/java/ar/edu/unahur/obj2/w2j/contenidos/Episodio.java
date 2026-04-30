@@ -1,4 +1,4 @@
-package ar.edu.unahur.obj2.w2j.contenido;
+package ar.edu.unahur.obj2.w2j.contenidos;
 
 public class Episodio {
 
@@ -21,9 +21,10 @@ public class Episodio {
   }
 
   public Double getCosto() {
-    return costo;
+    return costo; // devuelve el costo individual del episodio (unidad básica del cálculo)
   }
 
+  // Podria no estar
   public void setCosto(Double costo) {
     this.costo = costo;
   }

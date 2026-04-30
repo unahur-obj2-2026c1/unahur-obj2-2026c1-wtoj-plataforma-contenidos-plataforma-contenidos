@@ -1,7 +1,9 @@
-package ar.edu.unahur.obj2.wtoj;
+package ar.edu.unahur.obj2.w2j;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
 
 public class Plataforma {
 

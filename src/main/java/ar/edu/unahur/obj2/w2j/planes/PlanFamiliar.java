@@ -5,11 +5,12 @@ import java.util.List;
 import ar.edu.unahur.obj2.w2j.contenidos.Contenido;
 import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
 
-public class PlanBasico  implements IPlan{
+public class PlanFamiliar implements IPlan {
     private Integer limite;
     private Double costoBase = 5.0;
+    private Double descuento = 0.15;
 
-    public PlanBasico(Integer limite) {
+    public PlanFamiliar(Integer limite) {
         this.limite = limite;
     }
 
@@ -21,6 +22,6 @@ public class PlanBasico  implements IPlan{
             .mapToDouble(Contenido::getCostoBase) // esta es la forma moderna del closure
             .sum();
 
-        return this.costoBase + costoExcedentes;
+        return (this.costoBase + costoExcedentes) * (1 - descuento);
     }
 }

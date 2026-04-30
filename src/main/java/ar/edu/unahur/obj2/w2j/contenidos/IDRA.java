@@ -1,4 +1,4 @@
-package ar.edu.unahur.obj2.wtoj.contenido;
+package ar.edu.unahur.obj2.w2j.contenidos;
 
 public class IDRA {
 

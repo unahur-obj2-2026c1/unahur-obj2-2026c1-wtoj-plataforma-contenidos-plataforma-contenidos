@@ -16,14 +16,16 @@ public class Usuario {
         this.contenidos = contenidos;
     }
 
-    public Usuario() {}
+    public Usuario() {
+    }
 
     public Usuario(IPlan plan) {
         this.plan = plan;
     }
 
     public List<Contenido> getContenidos() {
-        return contenidos;    }
+        return contenidos;
+    }
 
     public void verContenido(Contenido contenido) {
         contenidos.add(contenido);
@@ -35,6 +37,10 @@ public class Usuario {
 
     public void setPlan(IPlan plan) {
         this.plan = plan;
+    }
+
+    public void limpiarContenidos() {
+        contenidos.clear();
     }
 
     public Double costoMensual() {

@@ -1,0 +1,344 @@
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\Main.java
+package ar.edu.unahur.obj2.w2j;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello world!");
+    }
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\Plataforma.java
+package ar.edu.unahur.obj2.w2j;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
+
+public class Plataforma {
+
+    private static Plataforma instance = new Plataforma();
+
+    private Plataforma() {
+    };
+
+    private List<Usuario> usuarios = new ArrayList<>();
+
+    public static Plataforma getIntance() {
+        return instance;
+    }
+
+    public Double facturacionMensual() {
+        return usuarios.stream().mapToDouble(u -> u.costoMensual()).sum();
+    }
+
+    public void limpiarContenidos() {
+        usuarios.stream().forEach(u -> u.limpiarContenidos());
+    }
+
+    public void agregarUsuario(Usuario usuario) {
+        usuarios.add(usuario);
+    }
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Contenido.java
+
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+public abstract class Contenido {
+    private String titulo;
+    private Double costoBase;
+
+    public Contenido(String titulo, Double costoBase) {
+        this.titulo = titulo;
+        this.costoBase = costoBase;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Double getCostoBase() {
+        return costoBase;
+    }
+
+    public void setCostoBase(Double costoBase) {
+        this.costoBase = costoBase;
+    }
+
+    // Template method
+    public Double costo() {
+        return costoBase + this.doCosto(); 
+    }
+
+    // Metodo abstracto doCosto()
+    public abstract Double doCosto();
+
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Documental.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+public class Documental extends Contenido {
+
+    public Documental(String titulo, Double costoBase) {
+        super(titulo, costoBase);
+    }
+
+    @Override
+    public Double doCosto() {
+        return IDRA.getInstance().getValor();
+    }
+
+    
+    
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Episodio.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+public class Episodio {
+
+  private final String titulo;
+  private final Integer numero;
+  private Double costo;
+
+  public Episodio(String titulo, Integer numero, Double costo) {
+    this.titulo = titulo;
+    this.numero = numero;
+    this.costo = costo;
+  }
+
+  public String getTitulo() {
+    return titulo;
+  }
+
+  public Integer getNumero() {
+    return numero;
+  }
+
+  public Double getCosto() {
+    return costo;
+  }
+
+  public void setCosto(Double costo) {
+    this.costo = costo;
+  }
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\IDRA.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+public class IDRA {
+
+    private static IDRA instance = new IDRA();
+    private Double valor = 0.5;
+
+    private IDRA() {
+    }
+
+    public static IDRA getInstance() {
+        return instance;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
+
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Pelicula.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+public class Pelicula extends Contenido {
+
+    public Pelicula(String titulo, Double costoBase) {
+        super(titulo, costoBase);
+    }
+
+    // public Double costo() {
+    //     return super.getCostoBase();
+    // }
+
+    @Override
+    public Double doCosto() {
+        return 0.0;
+    }
+
+
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Serie.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Serie extends Contenido {
+
+    private List<Temporada> temporadas = new ArrayList<>();
+
+    public Serie(String titulo, Double costoBase) {
+        super(titulo, costoBase);
+    }
+
+    @Override
+    public Double doCosto() {
+        return temporadas.stream().mapToDouble(t -> t.costo()).average().orElse(0.0);
+ }
+
+    public void agregarTemporada(Temporada temporada) {
+        temporadas.add(temporada);
+    }
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\contenidos\Temporada.java
+package ar.edu.unahur.obj2.w2j.contenidos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Temporada {
+    private final Integer numero;
+    private List<Episodio> episodios = new ArrayList<>();
+    
+    public Temporada(Integer numero) {
+        this.numero = numero;
+    }
+
+    public Temporada(Integer numero, List<Episodio> episodios) {
+        this.numero = numero;
+        this.episodios = episodios;
+    }
+
+        public void agregarEpisodio(Episodio episodio) {
+            episodios.add(episodio);
+        }
+
+        public Integer getNumero() {
+            return numero;
+        }
+
+        public List<Episodio> getEpisodios() {
+            return episodios;
+        }
+
+        public Double costo() {
+            return episodios.stream().mapToDouble(e -> e.getCosto()).average().orElse(0.0);
+        }
+    
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\planes\IPlan.java
+package ar.edu.unahur.obj2.w2j.planes;
+
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
+
+public interface IPlan {
+    Double costoPlan(Usuario usuario);
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\planes\PlanBasico.java
+package ar.edu.unahur.obj2.w2j.planes;
+
+import java.util.List;
+
+import ar.edu.unahur.obj2.w2j.contenidos.Contenido;
+import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
+
+public class PlanBasico  implements IPlan{
+    private Integer limite;
+
+    public PlanBasico(Integer limite) {
+        this.limite = limite;
+    }
+
+    @Override
+    public Double costoPlan(Usuario usuario) {
+        Double costoBase = 5.0;
+        List<Contenido> contenidos = usuario.getContenidos();
+        if (limite >= contenidos.size()) {
+            return costoBase;
+        } else  {
+            List<Contenido> excedentes = contenidos.subList(limite,contenidos.size());
+            return costoBase + excedentes.stream().mapToDouble(c -> c.costo()).sum();
+        }
+    }
+
+
+
+    
+
+}
+/*------------------------------------------------------------------------------------------*/
+
+// Archivo: .\src\main\java\ar\edu\unahur\obj2\w2j\usuarios\Usuario.java
+package ar.edu.unahur.obj2.w2j.usuarios;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ar.edu.unahur.obj2.w2j.contenidos.Contenido;
+import ar.edu.unahur.obj2.w2j.planes.IPlan;
+import ar.edu.unahur.obj2.w2j.planes.PlanBasico;
+
+public class Usuario {
+    private IPlan plan = new PlanBasico(10);
+    private List<Contenido> contenidos = new ArrayList<>();
+
+    public Usuario(IPlan plan, List<Contenido> contenidos) {
+        this.plan = plan;
+        this.contenidos = contenidos;
+    }
+
+    public Usuario() {
+    }
+
+    public Usuario(IPlan plan) {
+        this.plan = plan;
+    }
+
+    public List<Contenido> getContenidos() {
+        return contenidos;
+    }
+
+    public void verContenido(Contenido contenido) {
+        contenidos.add(contenido);
+    }
+
+    public IPlan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(IPlan plan) {
+        this.plan = plan;
+    }
+
+    public void limpiarContenidos() {
+        contenidos.clear();
+    }
+
+    public Double costoMensual() {
+        return plan.costoPlan(this);
+    }
+}
+/*------------------------------------------------------------------------------------------*/
+
