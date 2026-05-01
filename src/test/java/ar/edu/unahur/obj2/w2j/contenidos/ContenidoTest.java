@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import ar.edu.unahur.obj2.w2j.planes.PlanBasico;
+import ar.edu.unahur.obj2.w2j.planes.SPlanBasico;
 import ar.edu.unahur.obj2.w2j.usuarios.Usuario;
 
 public class ContenidoTest {
@@ -36,13 +36,14 @@ public class ContenidoTest {
 
     @Test
     void dadoUnUsuarioConContenidos_cuandoLimpiaConsumo_entoncesQuedaSinContenidos() {
-        Usuario usuario = new Usuario(new PlanBasico(2));
+        Usuario usuario = new Usuario(new SPlanBasico(2));
 
         usuario.verContenido(new Pelicula("P1", 2.0));
 
         usuario.limpiarContenidos();
 
         assertEquals(0, usuario.getContenidos().size());
+        
     }
 
 }

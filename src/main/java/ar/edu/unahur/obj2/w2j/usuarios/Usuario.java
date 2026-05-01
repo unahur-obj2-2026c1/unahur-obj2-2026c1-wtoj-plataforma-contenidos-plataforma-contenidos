@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.unahur.obj2.w2j.contenidos.Contenido;
-import ar.edu.unahur.obj2.w2j.planes.IPlan;
-import ar.edu.unahur.obj2.w2j.planes.PlanBasico;
+import ar.edu.unahur.obj2.w2j.planes.PlanStrategy;
+import ar.edu.unahur.obj2.w2j.planes.SPlanBasico;
 
 public class Usuario {
-    private IPlan plan = new PlanBasico(10);
+    private PlanStrategy plan = new SPlanBasico(10);
     private List<Contenido> contenidos = new ArrayList<>();
 
-    public Usuario(IPlan plan, List<Contenido> contenidos) {
+    public Usuario(PlanStrategy plan, List<Contenido> contenidos) {
         this.plan = plan;
         this.contenidos = contenidos;
     }
@@ -19,7 +19,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(IPlan plan) {
+    public Usuario(PlanStrategy plan) {
         this.plan = plan;
     }
 
@@ -31,11 +31,11 @@ public class Usuario {
         contenidos.add(contenido);
     }
 
-    public IPlan getPlan() {
+    public PlanStrategy getPlan() {
         return plan;
     }
 
-    public void setPlan(IPlan plan) {
+    public void setPlan(PlanStrategy plan) {
         this.plan = plan;
     }
 
