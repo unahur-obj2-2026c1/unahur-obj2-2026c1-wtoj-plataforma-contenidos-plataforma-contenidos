@@ -22,7 +22,7 @@ public abstract class SPlanLimitado implements PlanStrategy {
             .mapToDouble(Contenido::getCostoBase) // esta es la forma moderna del closure
             .sum();
         
-        Double total = this.costoBase + costoExcedentes;
+        Double total = costoBase + costoExcedentes;
         
         return aplicarAjuste(total);
     }
